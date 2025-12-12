@@ -1,0 +1,6 @@
+#.vscode
+.vscode
+#vcd files
+/*.vcd
+#sim
+/sim.out
