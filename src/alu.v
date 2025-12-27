@@ -18,8 +18,8 @@ parameter[3:0] ALUOP_SUB = 4'b0101; //Signed Subtraction
 parameter[3:0] ALUOP_MUL = 4'b0110; //Signed Multiplication
 parameter[3:0] ALUOP_LRS = 4'b0000; //Logical Right Shift by op2 bits
 parameter[3:0] ALUOP_LLS = 4'b0001; //Logical Left Shift by op2 bits
-parameter[3:0] ALUOP_ARS = 4'b0010; //Arithmetic(?) Right Shift by op2 bits
-parameter[3:0] ALUOP_ALS = 4'b0011; //Arithmetic(?) Left Shift by op2 bits
+parameter[3:0] ALUOP_ARS = 4'b0010; //Arithmetic Right Shift by op2 bits
+parameter[3:0] ALUOP_ALS = 4'b0011; //Arithmetic Left Shift by op2 bits
 //buffer_bits = 31'b0
 
 reg signed [63:0] extended_product;
