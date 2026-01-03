@@ -4,7 +4,7 @@
         {
             "label": "Run Verilog Simulation",
             "type": "shell",
-            "command": "iverilog -o sim.out (Get-ChildItem -Recurse -Filter *.v).FullName; vvp sim.out;",
+            "command": "iverilog -o sim.out -I ./src ./src/*.v ${file}; vvp sim.out;",
             "group": {
                 "kind": "build",
                 "isDefault": true
