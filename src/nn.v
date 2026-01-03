@@ -118,13 +118,13 @@ mac_unit MAC2(
 */
 reg[2:0] current_state, next_state;
 
-always @ (current_state)
+always @ (current_state, enable)
     begin: NEXT_STATE_LOGIC
-        if (resetn && enable)
+        if (resetn)
             begin
                         case (current_state)
                             Deactivated_State   : begin
-                                if (resetn && enable)
+                                if (enable)
                                     next_state = Loading_W_B;
                             end
                             Loading_W_B         : begin
@@ -135,10 +135,10 @@ always @ (current_state)
                                     writeReg2 = 4'h1;
                                     RegFileWriteData1 = 0;
                                     RegFileWriteData2 = 0;
-                                    #20
+                                    #20 //Wait for a clock cycle so that the data passes from the rom to the regfile
                                     writeReg1 = 4'h2; //shift_bias_1
                                     writeReg2 = 4'h3; //shift_bias_2
-                                    #20 //Wait for a clock cycle so that the data passes from the rom to the regfile
+                                    #20 
                                     address_ROM += 8;
                                     writeReg1 += 2; //weight_1
                                     writeReg2 += 2; //bias_1
@@ -248,15 +248,13 @@ always @ (current_state)
                             Data_Post_Layer      : begin
                                 next_state = Idle_State;
                             end
+                            Idle_State           : begin
+                                if (enable)
+                                    begin
+                                        next_state = Data_Pre_Layer;
+                                    end
+                            end
                         endcase
-            end
-    end
-
-always @(input_1, input_2) 
-    begin :IDLE_STATE_LOGIC
-        if (current_state == Idle_State && enable == 1)
-            begin
-                next_state = Data_Pre_Layer;
             end
     end
 
