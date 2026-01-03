@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Verilog Simulation",
+            "type": "shell",
+            "command": "iverilog -o sim.out (Get-ChildItem -Recurse -Filter *.v).FullName; vvp sim.out;",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
