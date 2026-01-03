@@ -4,3 +4,5 @@
 /*.vcd
 #sim
 /sim.out
+#txt files
+/tb/*.txt
