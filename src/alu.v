@@ -57,11 +57,11 @@ always @ (op1, op2, alu_op)
                 ovf = (op1[31] == result[31]) ? 0 : 1;
             end
             ALUOP_ALS   : begin
-                result = op1 >>> op2[4:0];
+                result = op1 <<< op2[4:0];
                 ovf = 0;
             end
             ALUOP_ARS   : begin
-                result = op1 <<< op2[4:0];
+                result = op1 >>> op2[4:0];
                 ovf = (op1[31] == result[31]) ? 0 : 1;
             end
             default     : begin
