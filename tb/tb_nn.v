@@ -6,6 +6,7 @@ module tb_nn();
     reg clk_tb;
     reg resetn_tb;
     reg enable_tb;
+    reg single_test;
     wire signed[31:0] final_output_tb;
     wire total_ovf_tb;
     wire total_zero_tb;
@@ -43,11 +44,21 @@ initial
         iteration = 0;
         passed_count = 0;
         failed_count = 0;
+        single_test = 0;
         $timeformat(-9, 2, " ns", 20);
         $dumpfile("nn.vcd");
         $dumpvars(0, tb_nn);
-        input_1_tb = 0;
-        input_2_tb = 0;
+        if (single_test)
+            begin
+                input_1_tb = 1343146143;
+                input_2_tb = 1679362119;
+            end
+        else
+            begin
+                input_1_tb = 0;
+                input_2_tb = 0;
+            end
+        nn_model_output = nn_model(input_1_tb, input_2_tb);
         #10
         resetn_tb = 1;
         enable_tb = 1;
@@ -60,51 +71,87 @@ always
     end
 
 always @(final_output_tb) begin
-    if (final_output_tb == nn_model_output)
+end
+
+
+always begin
+    #150
+    if (single_test)
         begin
-            $display("Passed");
-            passed_count = passed_count + 1;
-        end
-    else
-        begin
-            failed_count = failed_count + 1;
-            $display("Failed");
+            if (final_output_tb == nn_model_output)
+                begin
+                    passed_count = passed_count + 1;
+                end
+            else
+                begin
+                    failed_count = failed_count + 1;
+                    $display("Failed");
+                    $display("Failure at: %0t", $realtime);
+                end
             $display("My nn output: %d", final_output_tb);
             $display("nn_model output: %d", nn_model_output);
             $display("======================");
-        end
-    if (iteration <= 100)
-        begin
-            $display("Iteration #: %d", iteration);
-            $display("Starts at: %0t", $realtime);
-            case (count)
-                0: begin
-                    input_1_tb = $urandom_range(8191, 0) - 4096;
-                    input_2_tb = $urandom_range(8191, 0) - 4096;
-                    $display("Case 1 (Small): A=%d, B=%d", input_1_tb, input_2_tb);
-                    count = 1;
-                end
-                1: begin
-                    input_1_tb = $urandom_range(MAX_POS, MAX_POS / 2);
-                    input_2_tb = $urandom_range(MAX_POS, MAX_POS / 2);
-                    $display("Case 2 (Pos Ovf): A=%d, B=%d", input_1_tb, input_2_tb);
-                    count = 2;
-                end
-                2: begin
-                    input_1_tb = -1 * $urandom_range(2147483647, 1073741824);
-                    input_2_tb = -1 * $urandom_range(2147483647, 1073741824);
-                    $display("Case 3 (Neg Ovf): A=%d, B=%d", input_1_tb, input_2_tb);  
-                    count = 0;
-                end
-            endcase
-        iteration = iteration + 1;
-        nn_model_output = nn_model(input_1_tb, input_2_tb);
+            $finish;
         end
     else
         begin
-            $display("Passed: %d", passed_count);
-            $display("Failed: %d", failed_count);
-            $finish;
+            if (iteration > 0)
+                
+                begin
+                    if (final_output_tb == nn_model_output)
+                        begin
+                            //$display("Passed");
+                            passed_count = passed_count + 1;
+                        end
+                    else
+                        begin
+                            failed_count = failed_count + 1;
+                            $display("Failed");
+                            case (count)
+                                0: begin
+                                    $display("Case 3 (Neg Ovf): A=%d, B=%d", input_1_tb, input_2_tb);
+                                end
+                                1: begin
+                                    $display("Case 1 (Small): A=%d, B=%d", input_1_tb, input_2_tb);
+                                end
+                                2: begin
+                                    $display("Case 2 (Pos Ovf): A=%d, B=%d", input_1_tb, input_2_tb);
+                                end
+                            endcase
+                            $display("My nn output: %d", final_output_tb);
+                            $display("nn_model output: %d", nn_model_output);
+                            $display("======================");
+                        end
+                end
+            if (iteration <= 100)
+                begin
+                    case (count)
+                        0: begin //Case 1, small
+                            input_1_tb = $urandom_range(8191, 0) - 4096;
+                            input_2_tb = $urandom_range(8191, 0) - 4096;
+                            count = 1;
+                        end
+                        1: begin //Case 2, Pos Ovf
+                            input_1_tb = $urandom_range(MAX_POS, MAX_POS / 2);
+                            input_2_tb = $urandom_range(MAX_POS, MAX_POS / 2);
+                            count = 2;
+                        end
+                        2: begin //Case 3, Neg Ovf
+                            input_1_tb = -1 * $urandom_range(2147483647, 1073741824);
+                            input_2_tb = -1 * $urandom_range(2147483647, 1073741824);  
+                            count = 0;
+                            iteration = iteration + 1;
+                        end
+                    endcase
+                nn_model_output = nn_model(input_1_tb, input_2_tb);
+                end
+            else
+                begin
+                    $display("Passed: %d", passed_count);
+                    $display("Failed: %d", failed_count);
+                    $display("Number of Test Cases: %d", passed_count + failed_count);
+                    $finish;
+                end
         end
 end
 initial begin

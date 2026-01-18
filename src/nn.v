@@ -278,6 +278,8 @@ always @ (current_state, enable)
                                 if (enable)
                                     begin
                                         next_state = Data_Pre_Layer;
+                                        readReg1 = 4'h2;
+                                        readReg2 = 4'h3;
                                         address_ROM = 8;
                                     end
                             end
