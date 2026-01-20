@@ -21,6 +21,7 @@ module regfile
 
 reg [DATAWIDTH - 1:0] registers [0:15];
 reg[3:0] i;
+
 always @ (posedge clk, negedge resetn)
     begin
         if (~resetn == 1)
@@ -35,16 +36,16 @@ always @ (posedge clk, negedge resetn)
                 registers[writeReg1] <= writeData1;
                 registers[writeReg2] <= writeData2;
             end
-        readData1 = write && (writeReg1 == readReg1) ? writeData1 : 
+        readData1 <= write && (writeReg1 == readReg1) ? writeData1 : 
                    write && (writeReg2 == readReg1) ? writeData2 : 
                    registers[readReg1];
-        readData2 = write && (writeReg1 == readReg2) ? writeData1 : 
+        readData2 <= write && (writeReg1 == readReg2) ? writeData1 : 
                    write && (writeReg2 == readReg2) ? writeData2 : 
                    registers[readReg2];
-        readData3 = write && (writeReg1 == readReg3) ? writeData1 : 
+        readData3 <= write && (writeReg1 == readReg3) ? writeData1 : 
                    write && (writeReg2 == readReg3) ? writeData2 : 
                    registers[readReg3];
-        readData4 = write && (writeReg1 == readReg4) ? writeData1 : 
+        readData4 <= write && (writeReg1 == readReg4) ? writeData1 : 
                    write && (writeReg2 == readReg4) ? writeData2 : 
                    registers[readReg4];
     end

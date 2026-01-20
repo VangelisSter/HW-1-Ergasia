@@ -6,8 +6,8 @@ module alu_op_enc(
     input wire btnd_enc
 );
 
-wire btnl_n, btnr_n, btnd_n; //NOT gates of inputs
-
+//NOT gates of inputs
+wire btnl_n, btnr_n, btnd_n; 
 not N1 (btnl_n, btnl_enc);
 not N2 (btnr_n, btnr_enc);
 not N3 (btnd_n, btnd_enc);
